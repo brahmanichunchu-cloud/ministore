@@ -10,6 +10,15 @@ st.set_page_config(
 )
 
 # -----------------------------
+# SESSION STATE
+# -----------------------------
+if "cart_count" not in st.session_state:
+    st.session_state.cart_count = 0
+
+if "cart_total" not in st.session_state:
+    st.session_state.cart_total = 0.0
+
+# -----------------------------
 # PRODUCT DATA
 # -----------------------------
 products = [
@@ -22,43 +31,34 @@ products = [
     {
         "name": "Smart Watch",
         "price": 149.99,
-        "description": "Track fitness, heart rate and notifications.",
+        "description": "Track fitness, heart rate, and notifications.",
         "category": "Electronics"
     },
     {
         "name": "Running Shoes",
         "price": 89.99,
-        "description": "Lightweight shoes for running and workouts.",
+        "description": "Lightweight running shoes for daily workouts.",
         "category": "Fashion"
     },
     {
         "name": "Leather Backpack",
         "price": 59.99,
-        "description": "Stylish backpack for travel and office use.",
+        "description": "Durable backpack for travel and office use.",
         "category": "Fashion"
     },
     {
         "name": "Coffee Maker",
         "price": 99.99,
-        "description": "Automatic coffee maker with programmable timer.",
+        "description": "Automatic coffee maker with timer functionality.",
         "category": "Home"
     },
     {
         "name": "Desk Lamp",
         "price": 29.99,
-        "description": "LED lamp with adjustable brightness.",
+        "description": "LED desk lamp with adjustable brightness.",
         "category": "Home"
     }
 ]
-
-# -----------------------------
-# SESSION STATE
-# -----------------------------
-if "cart_count" not in st.session_state:
-    st.session_state.cart_count = 0
-
-if "cart_total" not in st.session_state:
-    st.session_state.cart_total = 0.0
 
 # -----------------------------
 # CUSTOM CSS
@@ -66,42 +66,34 @@ if "cart_total" not in st.session_state:
 st.markdown("""
 <style>
 
-.hero{
-    background:linear-gradient(135deg,#4f46e5,#7c3aed);
-    padding:40px;
-    border-radius:15px;
-    color:white;
-    text-align:center;
+.hero {
+    background: linear-gradient(135deg, #4F46E5, #7C3AED);
+    padding: 40px;
+    border-radius: 15px;
+    color: white;
+    text-align: center;
+    margin-bottom: 30px;
 }
 
-.product-card{
-    background:white;
-    padding:20px;
-    border-radius:15px;
-    box-shadow:0px 4px 12px rgba(0,0,0,0.1);
-    margin-bottom:20px;
+.product-card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0px 3px 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
 }
 
-.price{
-    color:green;
-    font-size:20px;
-    font-weight:bold;
+.price {
+    color: green;
+    font-size: 22px;
+    font-weight: bold;
 }
 
-.support-btn{
-    position:fixed;
-    bottom:20px;
-    right:20px;
-    z-index:999;
-}
-
-.support-btn a{
-    background:#4f46e5;
-    color:white;
-    text-decoration:none;
-    padding:15px 20px;
-    border-radius:50px;
-    font-weight:bold;
+.support-btn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    z-index: 999;
 }
 
 </style>
@@ -110,10 +102,10 @@ st.markdown("""
 # -----------------------------
 # SIDEBAR
 # -----------------------------
-st.sidebar.title("🛍 Categories")
+st.sidebar.title("🛍 Product Categories")
 
 categories = ["All"] + sorted(
-    list(set(p["category"] for p in products))
+    list(set(product["category"] for product in products))
 )
 
 selected_category = st.sidebar.radio(
@@ -132,33 +124,48 @@ st.sidebar.write(f"Total: ${st.session_state.cart_total:.2f}")
 # -----------------------------
 st.markdown("""
 <div class="hero">
-<h1>🛒 MiniStore</h1>
-<h3>Your One-Stop Shopping Destination</h3>
-<p>Discover amazing products at affordable prices.</p>
+    <h1>🛒 MiniStore</h1>
+    <h3>Your One-Stop Online Shopping Destination</h3>
+    <p>Discover amazing products at affordable prices.</p>
 </div>
 """, unsafe_allow_html=True)
 
-st.header("Featured Products")
+# -----------------------------
+# WELCOME SECTION
+# -----------------------------
+st.header("Welcome to MiniStore")
+
+st.write(
+    """
+    Explore our collection of high-quality products across
+    electronics, fashion, and home essentials.
+    """
+)
+
+st.markdown("---")
 
 # -----------------------------
-# FILTER PRODUCTS
+# PRODUCT FILTER
 # -----------------------------
 if selected_category == "All":
     filtered_products = products
 else:
     filtered_products = [
-        p for p in products
-        if p["category"] == selected_category
+        product
+        for product in products
+        if product["category"] == selected_category
     ]
 
 # -----------------------------
-# PRODUCT GRID
+# PRODUCT DISPLAY
 # -----------------------------
+st.subheader("⭐ Featured Products")
+
 cols = st.columns(3)
 
-for i, product in enumerate(filtered_products):
+for index, product in enumerate(filtered_products):
 
-    with cols[i % 3]:
+    with cols[index % 3]:
 
         st.markdown(
             f"""
@@ -166,7 +173,7 @@ for i, product in enumerate(filtered_products):
                 <h3>{product['name']}</h3>
                 <p class="price">${product['price']}</p>
                 <p>{product['description']}</p>
-                <p><b>Category:</b> {product['category']}</p>
+                <p><strong>Category:</strong> {product['category']}</p>
             </div>
             """,
             unsafe_allow_html=True
@@ -178,22 +185,20 @@ for i, product in enumerate(filtered_products):
         ):
             st.session_state.cart_count += 1
             st.session_state.cart_total += product["price"]
-            st.success("Added to cart")
+            st.success(f"{product['name']} added to cart!")
 
 # -----------------------------
-# SUPPORT CHATBOT NAVIGATION
+# SUPPORT CHATBOT LINK
 # -----------------------------
 st.page_link(
     "pages/Support_Chatbot.py",
-    label="💬 Open Support Chatbot"
+    label="💬 Open Support Chatbot",
+    icon="💬"
 )
 
 # Floating Button
 st.markdown("""
 <div class="support-btn">
-<a href="/Support_Chatbot" target="_self">
-💬 Support
-</a>
 </div>
 """, unsafe_allow_html=True)
 import streamlit as st
@@ -205,68 +210,147 @@ st.set_page_config(
 
 st.title("💬 MiniStore Support Chatbot")
 
+# -----------------------------
+# PRODUCT KNOWLEDGE BASE
+# -----------------------------
 products = {
-    "wireless headphones": "$79.99",
-    "smart watch": "$149.99",
-    "running shoes": "$89.99",
-    "leather backpack": "$59.99",
-    "coffee maker": "$99.99",
-    "desk lamp": "$29.99"
+    "wireless headphones": {
+        "price": "$79.99",
+        "category": "Electronics"
+    },
+    "smart watch": {
+        "price": "$149.99",
+        "category": "Electronics"
+    },
+    "running shoes": {
+        "price": "$89.99",
+        "category": "Fashion"
+    },
+    "leather backpack": {
+        "price": "$59.99",
+        "category": "Fashion"
+    },
+    "coffee maker": {
+        "price": "$99.99",
+        "category": "Home"
+    },
+    "desk lamp": {
+        "price": "$29.99",
+        "category": "Home"
+    }
 }
 
+# -----------------------------
+# CHAT HISTORY
+# -----------------------------
 if "messages" not in st.session_state:
     st.session_state.messages = [
         {
             "role": "assistant",
-            "content": "Hello! How can I help you today?"
+            "content":
+            "Hello! Welcome to MiniStore Support. How can I help you today?"
         }
     ]
 
+# Display previous messages
 for message in st.session_state.messages:
+
     with st.chat_message(message["role"]):
-        st.write(message["content"])
+        st.markdown(message["content"])
 
-def chatbot_response(user_input):
+# -----------------------------
+# CHATBOT LOGIC
+# -----------------------------
+def get_response(user_input):
 
-    text = user_input.lower()
+    query = user_input.lower()
 
-    for product, price in products.items():
-        if product in text:
-            return f"{product.title()} costs {price}."
+    # Product Questions
+    for name, details in products.items():
 
-    if "delivery" in text or "shipping" in text:
-        return "Standard delivery takes 3-5 business days."
+        if name in query:
 
-    if "refund" in text:
-        return "Refunds are processed within 5-7 business days."
+            return (
+                f"{name.title()} costs {details['price']} "
+                f"and belongs to the {details['category']} category."
+            )
 
-    if "return" in text:
-        return "Products can be returned within 30 days."
+    # Delivery Questions
+    if "delivery" in query or "shipping" in query:
+        return (
+            "Standard delivery takes 3-5 business days. "
+            "Express delivery takes 1-2 business days."
+        )
 
-    if "payment" in text or "pay" in text:
-        return "We accept UPI, Visa, Mastercard and PayPal."
+    # Refund Questions
+    if "refund" in query:
+        return (
+            "Refunds are processed within 5-7 business days "
+            "after approval."
+        )
 
-    if "order" in text and "status" in text:
-        return "Demo orders are currently marked as Processing."
+    # Return Questions
+    if "return" in query:
+        return (
+            "Products can be returned within 30 days of purchase."
+        )
 
-    return "I can help with products, delivery, refunds, returns, payments and order status."
+    # Payment Questions
+    if (
+        "payment" in query
+        or "pay" in query
+        or "card" in query
+    ):
+        return (
+            "We accept UPI, Visa, Mastercard, "
+            "Net Banking, and PayPal."
+        )
 
-prompt = st.chat_input("Ask a question...")
+    # Order Status
+    if "order" in query and "status" in query:
+        return (
+            "For this demo, all orders are currently "
+            "marked as Processing."
+        )
+
+    # Greetings
+    if "hello" in query or "hi" in query:
+        return (
+            "Hello! I can help you with products, "
+            "delivery, refunds, returns, payments, "
+            "and order status."
+        )
+
+    return (
+        "I can help with product information, delivery, "
+        "refunds, returns, payment methods, and order status."
+    )
+
+# -----------------------------
+# USER INPUT
+# -----------------------------
+prompt = st.chat_input("Ask your question here...")
 
 if prompt:
 
     st.session_state.messages.append(
-        {"role": "user", "content": prompt}
+        {
+            "role": "user",
+            "content": prompt
+        }
     )
 
     with st.chat_message("user"):
-        st.write(prompt)
+        st.markdown(prompt)
 
-    response = chatbot_response(prompt)
+    response = get_response(prompt)
 
     st.session_state.messages.append(
-        {"role": "assistant", "content": response}
+        {
+            "role": "assistant",
+            "content": response
+        }
     )
 
     with st.chat_message("assistant"):
-        st.write(response)
+        st.markdown(response)
