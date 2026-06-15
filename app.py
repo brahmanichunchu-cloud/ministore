@@ -1,26 +1,26 @@
 import streamlit as st
 
-# -----------------------------
+# -------------------------------------------------
 # PAGE CONFIG
-# -----------------------------
+# -------------------------------------------------
 st.set_page_config(
     page_title="MiniStore",
     page_icon="🛒",
     layout="wide"
 )
 
-# -----------------------------
+# -------------------------------------------------
 # SESSION STATE
-# -----------------------------
+# -------------------------------------------------
 if "cart_count" not in st.session_state:
     st.session_state.cart_count = 0
 
 if "cart_total" not in st.session_state:
     st.session_state.cart_total = 0.0
 
-# -----------------------------
-# PRODUCT DATA
-# -----------------------------
+# -------------------------------------------------
+# PRODUCTS
+# -------------------------------------------------
 products = [
     {
         "name": "Wireless Headphones",
@@ -31,43 +31,43 @@ products = [
     {
         "name": "Smart Watch",
         "price": 149.99,
-        "description": "Track fitness, heart rate, and notifications.",
+        "description": "Track fitness, heart rate and notifications.",
         "category": "Electronics"
     },
     {
         "name": "Running Shoes",
         "price": 89.99,
-        "description": "Lightweight running shoes for daily workouts.",
+        "description": "Lightweight shoes for running and workouts.",
         "category": "Fashion"
     },
     {
         "name": "Leather Backpack",
         "price": 59.99,
-        "description": "Durable backpack for travel and office use.",
+        "description": "Stylish backpack for travel and office use.",
         "category": "Fashion"
     },
     {
         "name": "Coffee Maker",
         "price": 99.99,
-        "description": "Automatic coffee maker with timer functionality.",
+        "description": "Automatic coffee maker with programmable timer.",
         "category": "Home"
     },
     {
         "name": "Desk Lamp",
         "price": 29.99,
-        "description": "LED desk lamp with adjustable brightness.",
+        "description": "LED lamp with adjustable brightness.",
         "category": "Home"
     }
 ]
 
-# -----------------------------
+# -------------------------------------------------
 # CUSTOM CSS
-# -----------------------------
+# -------------------------------------------------
 st.markdown("""
 <style>
 
 .hero {
-    background: linear-gradient(135deg, #4F46E5, #7C3AED);
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
     padding: 40px;
     border-radius: 15px;
     color: white;
@@ -76,10 +76,10 @@ st.markdown("""
 }
 
 .product-card {
-    background-color: white;
+    background: white;
     padding: 20px;
     border-radius: 15px;
-    box-shadow: 0px 3px 10px rgba(0,0,0,0.1);
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
     margin-bottom: 20px;
 }
 
@@ -89,20 +89,13 @@ st.markdown("""
     font-weight: bold;
 }
 
-.support-btn {
-    position: fixed;
-    bottom: 25px;
-    right: 25px;
-    z-index: 999;
-}
-
 </style>
 """, unsafe_allow_html=True)
 
-# -----------------------------
+# -------------------------------------------------
 # SIDEBAR
-# -----------------------------
-st.sidebar.title("🛍 Product Categories")
+# -------------------------------------------------
+st.sidebar.title("🛍 Categories")
 
 categories = ["All"] + sorted(
     list(set(product["category"] for product in products))
@@ -116,12 +109,18 @@ selected_category = st.sidebar.radio(
 st.sidebar.markdown("---")
 
 st.sidebar.subheader("🛒 Shopping Cart")
-st.sidebar.write(f"Items: {st.session_state.cart_count}")
-st.sidebar.write(f"Total: ${st.session_state.cart_total:.2f}")
 
-# -----------------------------
+st.sidebar.write(
+    f"Items: {st.session_state.cart_count}"
+)
+
+st.sidebar.write(
+    f"Total: ${st.session_state.cart_total:.2f}"
+)
+
+# -------------------------------------------------
 # HERO SECTION
-# -----------------------------
+# -------------------------------------------------
 st.markdown("""
 <div class="hero">
     <h1>🛒 MiniStore</h1>
@@ -130,23 +129,19 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# -----------------------------
-# WELCOME SECTION
-# -----------------------------
+# -------------------------------------------------
+# WELCOME
+# -------------------------------------------------
 st.header("Welcome to MiniStore")
 
-st.write(
-    """
-    Explore our collection of high-quality products across
-    electronics, fashion, and home essentials.
-    """
-)
+st.write("""
+Explore our collection of electronics,
+fashion and home products.
+""")
 
-st.markdown("---")
-
-# -----------------------------
-# PRODUCT FILTER
-# -----------------------------
+# -------------------------------------------------
+# FILTER PRODUCTS
+# -------------------------------------------------
 if selected_category == "All":
     filtered_products = products
 else:
@@ -156,9 +151,9 @@ else:
         if product["category"] == selected_category
     ]
 
-# -----------------------------
-# PRODUCT DISPLAY
-# -----------------------------
+# -------------------------------------------------
+# PRODUCTS
+# -------------------------------------------------
 st.subheader("⭐ Featured Products")
 
 cols = st.columns(3)
@@ -173,7 +168,7 @@ for index, product in enumerate(filtered_products):
                 <h3>{product['name']}</h3>
                 <p class="price">${product['price']}</p>
                 <p>{product['description']}</p>
-                <p><strong>Category:</strong> {product['category']}</p>
+                <p><b>Category:</b> {product['category']}</p>
             </div>
             """,
             unsafe_allow_html=True
@@ -185,19 +180,14 @@ for index, product in enumerate(filtered_products):
         ):
             st.session_state.cart_count += 1
             st.session_state.cart_total += product["price"]
-            st.success(f"{product['name']} added to cart!")
+            st.success(
+                f"{product['name']} added to cart!"
+            )
 
-# -----------------------------
-# SUPPORT CHATBOT LINK
-# -----------------------------
-st.page_link(
-    "pages/Support_Chatbot.py",
-    label="💬 Open Support Chatbot",
-    icon="💬"
-)
+# -------------------------------------------------
+# SUPPORT BUTTON
+# -------------------------------------------------
+st.markdown("---")
 
-# Floating Button
-st.markdown("""
-<div class="support-btn">
-</div>
-""", unsafe_allow_html=True)
+if st.button("💬 Open Support Chatbot"):
+    st.switch_page("pages/Support_Chatbot.py")
